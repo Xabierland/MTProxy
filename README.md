@@ -43,7 +43,7 @@ head -c 16 /dev/urandom | xxd -ps
 ```
 4. Run `mtproto-proxy`:
 ```bash
-./mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> --aes-pwd proxy-secret proxy-multi.conf -M 1
+./mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> --aes-pwd proxy-secret proxy-multi.conf -M 1 --http-stats
 ```
 ... where:
 - `nobody` is the username. `mtproto-proxy` calls `setuid()` to drop privilegies.
@@ -55,10 +55,8 @@ head -c 16 /dev/urandom | xxd -ps
 
 Also feel free to check out other options using `mtproto-proxy --help`.
 
-5. Generate the link with following schema: `tg://proxy?server=SERVER_NAME&port=PORT&secret=SECRET` (or let the official bot generate it for you).
-6. Register your proxy with [@MTProxybot](https://t.me/MTProxybot) on Telegram.
-7. Set received tag with arguments: `-P <proxy tag>`
-8. Enjoy.
+5. Generate the link with following schema: `https://t.me/proxy?server=SERVER_NAME&port=PORT&secret=SECRET` (or let the official bot generate it for you).
+6. Enjoy.
 
 ## Random padding
 Due to some ISPs detecting MTProxy by packet sizes, random padding is
@@ -83,7 +81,7 @@ After=network.target
 [Service]
 Type=simple
 WorkingDirectory=/opt/MTProxy
-ExecStart=/opt/MTProxy/mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> -P <proxy tag> <other params>
+ExecStart=/opt/MTProxy/mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> --aes-pwd proxy-secret proxy-multi.conf -M 1 --http-stats
 Restart=on-failure
 
 [Install]
