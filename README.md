@@ -1,20 +1,26 @@
 # MTProxy
+
 Simple MT-Proto proxy
 
 ## Building
+
 Install dependencies, you would need common set of tools for building from source, and development packages for `openssl` and `zlib`.
 
 On Debian/Ubuntu:
+
 ```bash
 apt install git curl build-essential libssl-dev zlib1g-dev
 ```
+
 On CentOS/RHEL:
+
 ```bash
 yum install openssl-devel zlib-devel
 yum groupinstall "Development Tools"
 ```
 
 Clone the repo:
+
 ```bash
 git clone https://github.com/TelegramMessenger/MTProxy
 cd MTProxy
@@ -27,6 +33,13 @@ make && cd objs/bin
 ```
 
 If the build has failed, you should run `make clean` before building it again.
+
+Copy the binary to the opt directory:
+
+```bash
+mkdir /opt/MTProxy
+cp mtproto-proxy /opt/MTProxy
+```
 
 ## Running
 1. Obtain a secret, used to connect to telegram servers.
@@ -41,7 +54,7 @@ curl -s https://core.telegram.org/getProxyConfig -o proxy-multi.conf
 ```bash
 head -c 16 /dev/urandom | xxd -ps
 ```
-4. Run `mtproto-proxy`:
+4. Run `mtproto-proxy` manually:
 ```bash
 ./mtproto-proxy -u nobody -p 8888 -H 443 -S <secret> --aes-pwd proxy-secret proxy-multi.conf -M 1 --http-stats
 ```
@@ -59,6 +72,7 @@ Also feel free to check out other options using `mtproto-proxy --help`.
 6. Enjoy.
 
 ## Random padding
+
 Due to some ISPs detecting MTProxy by packet sizes, random padding is
 added to packets if such mode is enabled.
 
@@ -68,7 +82,8 @@ Add `dd` prefix to secret (`cafe...babe` => `ddcafe...babe`) to enable
 this mode on client side.
 
 ## Systemd example configuration
-1. Create systemd service file (it's standard path for the most Linux distros, but you should check it before):
+
+1. Create systemd service file (it's standard path for the most Linux distros, but you should check it before `man systemd.unit`):
 ```bash
 nano /etc/systemd/system/MTProxy.service
 ```
@@ -102,6 +117,7 @@ systemctl status MTProxy.service
 systemctl enable MTProxy.service
 ```
 
-## Docker image
-Telegram is also providing [official Docker image](https://hub.docker.com/r/telegrammessenger/proxy/).
-Note: the image is outdated.
+## Note
+
+There are some issues with the pid in new systems. Restarting the server will fix the issue.
+This is not the best solution, but it works until I find the best solution.
